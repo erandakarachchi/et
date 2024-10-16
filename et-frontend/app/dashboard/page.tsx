@@ -1,5 +1,7 @@
 import AddExpenseDialog from "@/components/templates/AddExpenseDialog";
+import ExpensesTable from "@/components/templates/ExpensesTable";
 import OverviewTile from "@/components/templates/OverviewTile";
+import PieChartCard from "@/components/templates/PieChartCard";
 import Title from "@/components/templates/Title";
 import { Button } from "@/components/ui/button";
 import { Wallet, Carrot, Layers3, ChartSpline } from "lucide-react";
@@ -42,6 +44,11 @@ const Page = (props: Props) => {
             </p>
           </OverviewTile>
         </div>
+      </section>
+      {/* Charts and Recents */}
+      <section className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-8">
+        <PieChartCard />
+        <ExpensesTable />
       </section>
     </div>
   );
