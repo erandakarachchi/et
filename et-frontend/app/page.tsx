@@ -1,5 +1,6 @@
 "use client";
 
+import GetStarted from "@/components/templates/GetStarted";
 import { Button } from "@/components/ui/button";
 
 export default function Home() {
@@ -12,9 +13,8 @@ export default function Home() {
   };
 
   return (
-    <div>
-      <h1>Expense Tracker</h1>
-      <Button onClick={callApi}>Call API</Button>
+    <div className="absolute inset-0 -z-10 size-full bg-white bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] [background-size:16px_16px]">
+      <GetStarted />
     </div>
   );
 }
