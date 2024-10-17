@@ -8,7 +8,7 @@ const GetStarted = (props: Props) => {
   const router = useRouter();
 
   const onGetStarted = () => {
-    router.push("/dashboard");
+    router.push("/onboard");
   };
 
   return (
