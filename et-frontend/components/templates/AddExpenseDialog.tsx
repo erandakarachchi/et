@@ -14,6 +14,7 @@ import { Button } from "../ui/button";
 import InputWithLabel from "./InputWithLabel";
 import { useAddExpenses } from "@/lib/react-query/queries/useAddExpenses";
 import { useState } from "react";
+import { LoadingButton } from "../ui/loading-button";
 
 type Props = {};
 
@@ -68,7 +69,7 @@ const AddExpenseDialog = (props: Props) => {
             <DialogTitle>Add Expense</DialogTitle>
             <DialogDescription>Add a new expense to your account.</DialogDescription>
           </DialogHeader>
-          <div className="grid gap-6 py-4">
+          <div className="grid gap-6 py-4 mt-4">
             <InputWithLabel
               id="description"
               value={description}
@@ -92,9 +93,9 @@ const AddExpenseDialog = (props: Props) => {
             />
           </div>
           <DialogFooter>
-            <Button type="submit" disabled={isPending}>
+            <LoadingButton type="submit" className="h-12 w-1/2 mt-8" loading={isPending}>
               Save
-            </Button>
+            </LoadingButton>
           </DialogFooter>
         </form>
       </DialogContent>

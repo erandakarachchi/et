@@ -38,6 +38,13 @@ export class LambdaStack extends Stack {
       timeout: Duration.seconds(30),
     });
 
+    const onboardUserLambda = new NodejsFunction(this, "OnboardUserLambda", {
+      entry: path.join(__dirname, "../src/lambdas/user/onboard.ts"),
+      runtime: Runtime.NODEJS_20_X,
+      handler: "handler",
+      timeout: Duration.seconds(30),
+    });
+
     const helloResource = api.root.addResource("hello");
     helloResource.addMethod("GET");
 
@@ -47,5 +54,8 @@ export class LambdaStack extends Stack {
     expensesResource.addMethod("GET", viewAllExpensesIntegration);
     expensesResource.addMethod("POST", createExpenseIntegration);
 
+    const onboardUserIntegration = new apigateway.LambdaIntegration(onboardUserLambda);
+    const onboardUserResource = api.root.addResource("user");
+    onboardUserResource.addMethod("POST", onboardUserIntegration);
   }
 }

@@ -1,4 +1,5 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { QUERY_KEYS } from "../constants";
 
 interface Expense {
   amount: number;
@@ -23,7 +24,7 @@ export const useAddExpenses = () => {
   return useMutation({
     mutationFn: addExpense,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["expenses"] });
+      queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.EXPENSES] });
     },
   });
 };

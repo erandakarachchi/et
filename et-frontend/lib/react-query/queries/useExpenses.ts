@@ -1,4 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
+import { QUERY_KEYS } from "../constants";
 
 
 const fetchExpenses = async () => {
@@ -9,7 +10,7 @@ const fetchExpenses = async () => {
 
 export const useExpenses = () => {
     return useQuery({
-        queryKey: ["expenses"],
+        queryKey: [QUERY_KEYS.EXPENSES],
         queryFn: fetchExpenses,
     });
 };

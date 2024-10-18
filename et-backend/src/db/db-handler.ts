@@ -2,7 +2,9 @@ import { IExpense } from "../types/expense";
 import Expense from "../db/models/expense";
 import User from "../db/models/user";
 import connectToDatabase from "./config";
-import { IUser } from "../types/user";
+import { IUser, IUserWithId } from "../types/user";
+import { DEFAULT_CATEGORIES } from "../utils/constants";
+import { generateUUID } from "../utils/utils";
 
 export const createExpense = async (newExpense: IExpense) => {
   await connectToDatabase();
@@ -12,14 +14,16 @@ export const createExpense = async (newExpense: IExpense) => {
   return savedExpense;
 };
 
-export const saveUser = async (params: any) => {
+export const createUser = async (newUser: IUser) => {
   await connectToDatabase();
-  const newUser: IUser = {
-    email: "john.doe@example.com",
-    name: "John Doe",
-    maxMonthlyExpense: 1000,
+  const user: IUserWithId = {
+    id: generateUUID(),
+    email: newUser.email,
+    name: newUser.name,
+    maxMonthlyExpenseLimit: newUser.maxMonthlyExpenseLimit,
+    categories: [...DEFAULT_CATEGORIES],
   };
-  const u = new User(newUser);
+  const u = new User(user);
   await u.validate();
   const savedU = await u.save();
   return savedU;
