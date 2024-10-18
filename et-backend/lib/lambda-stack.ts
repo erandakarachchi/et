@@ -31,11 +31,21 @@ export class LambdaStack extends Stack {
       proxy: false,
     });
 
+    const createExpenseLambda = new NodejsFunction(this, "CreateExpenseLambda", {
+      entry: path.join(__dirname, "../src/lambdas/expense/create.ts"),
+      runtime: Runtime.NODEJS_20_X,
+      handler: "handler",
+      timeout: Duration.seconds(30),
+    });
+
     const helloResource = api.root.addResource("hello");
     helloResource.addMethod("GET");
 
     const viewAllExpensesIntegration = new apigateway.LambdaIntegration(viewAllExpensesLambda);
+    const createExpenseIntegration = new apigateway.LambdaIntegration(createExpenseLambda);
     const expensesResource = api.root.addResource("expenses");
     expensesResource.addMethod("GET", viewAllExpensesIntegration);
+    expensesResource.addMethod("POST", createExpenseIntegration);
+
   }
 }
