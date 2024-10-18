@@ -26,11 +26,6 @@ export class LambdaStack extends Stack {
       timeout: Duration.seconds(30),
     });
 
-    const api = new apigateway.LambdaRestApi(this, "HelloWorldApi", {
-      handler: helloWorldLambda,
-      proxy: false,
-    });
-
     const createExpenseLambda = new NodejsFunction(this, "CreateExpenseLambda", {
       entry: path.join(__dirname, "../src/lambdas/expense/create.ts"),
       runtime: Runtime.NODEJS_20_X,
@@ -57,6 +52,16 @@ export class LambdaStack extends Stack {
       runtime: Runtime.NODEJS_20_X,
       handler: "handler",
       timeout: Duration.seconds(30),
+    });
+
+    const api = new apigateway.LambdaRestApi(this, "HelloWorldApi", {
+      handler: helloWorldLambda,
+      proxy: false,
+      defaultCorsPreflightOptions: {
+        allowOrigins: apigateway.Cors.ALL_ORIGINS,
+        allowMethods: apigateway.Cors.ALL_METHODS,
+        allowHeaders: apigateway.Cors.DEFAULT_HEADERS,
+      },
     });
 
     const helloResource = api.root.addResource("hello");

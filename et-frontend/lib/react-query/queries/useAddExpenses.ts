@@ -1,28 +1,16 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { QUERY_KEYS } from "../constants";
+import { ExpensesApi } from "@/lib/api/expenses";
+import { NewExpense } from "@/types/expense";
 
-interface Expense {
-  amount: number;
-  description: string;
-  category: string;
-  date: string;
-}
+// const expensesApi = ExpensesApi.getInstance();
 
-const addExpense = async (expense: Expense) => {
-  const response = await fetch("https://mvku1vlwcg.execute-api.us-east-1.amazonaws.com/prod/expenses", {
-    method: "POST",
-    body: JSON.stringify(expense),
-  });
-  if (!response.ok) {
-    throw new Error("Failed to add expense");
-  }
-  return response.json();
-};
+const expensesApi = new ExpensesApi();
 
 export const useAddExpenses = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: addExpense,
+    mutationFn: (expense: NewExpense) => expensesApi.addExpense(expense),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.EXPENSES] });
     },
