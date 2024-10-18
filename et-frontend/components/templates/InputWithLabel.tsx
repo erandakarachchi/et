@@ -19,7 +19,7 @@ const InputWithLabel = ({ label, placeholder, id, value, onChange }: Props) => {
       <Label className="text-sm font-semibold" htmlFor="description">
         {label}
       </Label>
-      <Input className="h-12" id={id} value={value} placeholder={placeholder} onChange={onChange}/>
+      <Input className="h-10" id={id} value={value} placeholder={placeholder} onChange={onChange}/>
     </div>
   );
 };

@@ -1,14 +1,19 @@
+"use client";
+
 import AddExpenseDialog from "@/components/templates/AddExpenseDialog";
 import ExpensesTable from "@/components/templates/ExpensesTable";
 import OverviewTile from "@/components/templates/OverviewTile";
 import PieChartCard from "@/components/templates/PieChartCard";
 import Title from "@/components/templates/Title";
 import { Button } from "@/components/ui/button";
+import { useStatistics } from "@/lib/react-query/queries/useStatistics";
 import { Wallet, Carrot, Layers3, ChartSpline } from "lucide-react";
 
 type Props = {};
 
 const Page =  (props: Props) => {
+
+  const { data, isLoading } = useStatistics();
 
   return (
     <div className="md:ml-[256px] p-8">

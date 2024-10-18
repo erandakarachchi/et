@@ -1,12 +1,11 @@
 "use client";
 
 import { useState } from "react";
-import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { Label } from "@radix-ui/react-label";
 import { useRouter } from "next/navigation";
-import { useOnboard } from "@/lib/react-query/queries/useOnboard";
 import { LoadingButton } from "../ui/loading-button";
+import { useOnboard } from "@/lib/react-query/queries/useOnboard";
 
 type Props = {};
 

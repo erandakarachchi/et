@@ -34,3 +34,9 @@ export const viewAllExpenses = async () => {
   const expenses = await Expense.find();
   return expenses;
 };
+
+export const getUserById = async (id: string) => {
+  await connectToDatabase();
+  const user = await User.findById(id);
+  return user;
+};

@@ -15,11 +15,16 @@ import InputWithLabel from "./InputWithLabel";
 import { useAddExpenses } from "@/lib/react-query/queries/useAddExpenses";
 import { useState } from "react";
 import { LoadingButton } from "../ui/loading-button";
+import { DatePicker } from "./DatePicker";
+import { Label } from "@radix-ui/react-label";
+import { useCategories } from "@/lib/react-query/queries/useCategories";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
 
 type Props = {};
 
 const AddExpenseDialog = (props: Props) => {
   const { mutate: addExpense, isPending } = useAddExpenses();
+  const { data: categories, isLoading: isCategoriesLoading } = useCategories();
 
   const [description, setDescription] = useState("");
   const [amount, setAmount] = useState("");
@@ -84,16 +89,32 @@ const AddExpenseDialog = (props: Props) => {
               placeholder="Amount"
               onChange={handleAmountChange}
             />
-            <InputWithLabel
-              id="category"
-              value={category}
-              label="Category"
-              placeholder="Category"
-              onChange={handleCategoryChange}
-            />
+            <div className="grid gap-1">
+              <Label className="text-sm font-semibold" htmlFor="date">
+                Category
+              </Label>
+              <Select>
+                <SelectTrigger className="w-full h-10">
+                  <SelectValue placeholder="Select a category" />
+                </SelectTrigger>
+                <SelectContent>
+                  {categories?.data?.map((category: any) => (
+                    <SelectItem key={category.id} value={category.id}>
+                      {category.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="grid gap-1">
+              <Label className="text-sm font-semibold" htmlFor="date">
+                Date
+              </Label>
+              <DatePicker />
+            </div>
           </div>
           <DialogFooter>
-            <LoadingButton type="submit" className="h-12 w-1/2 mt-8" loading={isPending}>
+            <LoadingButton type="submit" className="h-10 w-1/2 mt-4" loading={isPending}>
               Save
             </LoadingButton>
           </DialogFooter>

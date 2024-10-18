@@ -45,6 +45,20 @@ export class LambdaStack extends Stack {
       timeout: Duration.seconds(30),
     });
 
+    const statisticsLambda = new NodejsFunction(this, "StatisticsLambda", {
+      entry: path.join(__dirname, "../src/lambdas/user/statistics.ts"),
+      runtime: Runtime.NODEJS_20_X,
+      handler: "handler",
+      timeout: Duration.seconds(30),
+    });
+
+    const userCategoriesLambda = new NodejsFunction(this, "UserCategoriesLambda", {
+      entry: path.join(__dirname, "../src/lambdas/user/user-categories.ts"),
+      runtime: Runtime.NODEJS_20_X,
+      handler: "handler",
+      timeout: Duration.seconds(30),
+    });
+
     const helloResource = api.root.addResource("hello");
     helloResource.addMethod("GET");
 
@@ -57,5 +71,11 @@ export class LambdaStack extends Stack {
     const onboardUserIntegration = new apigateway.LambdaIntegration(onboardUserLambda);
     const onboardUserResource = api.root.addResource("user");
     onboardUserResource.addMethod("POST", onboardUserIntegration);
+
+    const statisticsIntegration = new apigateway.LambdaIntegration(statisticsLambda);
+    onboardUserResource.addResource("statistics").addMethod("GET", statisticsIntegration);
+
+    const userCategoriesIntegration = new apigateway.LambdaIntegration(userCategoriesLambda);
+    onboardUserResource.addResource("categories").addMethod("GET", userCategoriesIntegration);
   }
 }
