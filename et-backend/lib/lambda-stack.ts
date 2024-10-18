@@ -19,6 +19,13 @@ export class LambdaStack extends Stack {
       timeout: Duration.seconds(30),
     });
 
+    const viewAllExpensesLambda = new NodejsFunction(this, "ViewAllExpensesLambda", {
+      entry: path.join(__dirname, "../src/lambdas/expense/view-all.ts"),
+      runtime: Runtime.NODEJS_20_X,
+      handler: "handler",
+      timeout: Duration.seconds(30),
+    });
+
     const api = new apigateway.LambdaRestApi(this, "HelloWorldApi", {
       handler: helloWorldLambda,
       proxy: false,
@@ -26,5 +33,9 @@ export class LambdaStack extends Stack {
 
     const helloResource = api.root.addResource("hello");
     helloResource.addMethod("GET");
+
+    const viewAllExpensesIntegration = new apigateway.LambdaIntegration(viewAllExpensesLambda);
+    const expensesResource = api.root.addResource("expenses");
+    expensesResource.addMethod("GET", viewAllExpensesIntegration);
   }
 }

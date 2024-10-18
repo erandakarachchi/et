@@ -31,3 +31,9 @@ export const saveUser = async (params: any) => {
   const savedU = await u.save();
   return savedU;
 };
+
+export const viewAllExpenses = async () => {
+  await connectToDatabase();
+  const expenses = await Expense.find();
+  return expenses;
+};
