@@ -26,7 +26,7 @@ const SideBar = (props: Props) => {
             }`}
             onClick={() => setSelected("transactions")}
           >
-            <p className="text-md ">Transactions</p>
+            <p className="text-md ">Expenses</p>
           </div>
         </Link>
         <Link href="/categories">

@@ -1,7 +1,7 @@
 import { APIGatewayProxyEvent, APIGatewayProxyResult, Handler } from "aws-lambda";
 import { sendResponse } from "../../utils/response-utils";
-import { createExpense } from "../../db/db-handler";
-import { IExpense } from "../../types/expense";
+import { IUser } from "../../types/user";
+import { createUser } from "../../db/db-handler";
 
 export const handler: Handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
   try {
@@ -9,17 +9,14 @@ export const handler: Handler = async (event: APIGatewayProxyEvent): Promise<API
       return sendResponse(400, "Invalid request", {});
     }
     const data = JSON.parse(event.body);
-    const expense: IExpense = {
-        amount: data.amount,
-        description: data.description,
-        date: data.date,
-        category: data.category,
-        userId: "123",
+    const user: IUser = {
+      email: data.email,
+      name: data.name,
+      maxMonthlyExpenseLimit: data.maxMonthlyExpenseLimit,
     };
-    await createExpense(expense);
-    return sendResponse(200, "Expense created", {});
+    const newUser = await createUser(user);
+    return sendResponse(200, "User onBoarded", newUser);
   } catch (error) {
-    console.log(error);
     return sendResponse(500, "Error occurred", {});
   }
 };

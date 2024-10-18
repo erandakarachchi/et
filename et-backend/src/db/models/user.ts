@@ -5,13 +5,18 @@ const User = new Schema<IUser>({
   email: {
     type: String,
     required: true,
+    unique: true,
   },
   name: {
     type: String,
     required: true,
   },
-  maxMonthlyExpense: {
+  maxMonthlyExpenseLimit: {
     type: Number,
+    required: true,
+  },
+  categories: {
+    type: [Object],
     required: true,
   },
 });

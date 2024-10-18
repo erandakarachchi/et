@@ -2,32 +2,41 @@ import { IExpense } from "../types/expense";
 import Expense from "../db/models/expense";
 import User from "../db/models/user";
 import connectToDatabase from "./config";
-import { IUser } from "../types/user";
+import { IUser, IUserWithId } from "../types/user";
+import { DEFAULT_CATEGORIES } from "../utils/constants";
+import { generateUUID } from "../utils/utils";
 
-export const saveExpense = async (expense: IExpense) => {
+export const createExpense = async (newExpense: IExpense) => {
   await connectToDatabase();
-  const newExpense: IExpense = {
-    amount: 30,
-    description: "Transport",
-    date: new Date(),
-    category: "Food",
-    userId: "123",
-  };
-  const e = new Expense(newExpense);
-  await e.validate();
-  const savedE = await e.save();
-  return savedE;
+  const expense = new Expense(newExpense);
+  // await expense.validate();
+  const savedExpense = await expense.save();
+  return savedExpense;
 };
 
-export const saveUser = async (params: any) => {
+export const createUser = async (newUser: IUser) => {
   await connectToDatabase();
-  const newUser: IUser = {
-    email: "john.doe@example.com",
-    name: "John Doe",
-    maxMonthlyExpense: 1000,
+  const user: IUserWithId = {
+    id: generateUUID(),
+    email: newUser.email,
+    name: newUser.name,
+    maxMonthlyExpenseLimit: newUser.maxMonthlyExpenseLimit,
+    categories: [...DEFAULT_CATEGORIES],
   };
-  const u = new User(newUser);
+  const u = new User(user);
   await u.validate();
   const savedU = await u.save();
   return savedU;
+};
+
+export const viewAllExpenses = async () => {
+  await connectToDatabase();
+  const expenses = await Expense.find();
+  return expenses;
+};
+
+export const getUserById = async (id: string) => {
+  await connectToDatabase();
+  const user = await User.findById(id);
+  return user;
 };

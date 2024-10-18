@@ -1,3 +1,5 @@
+"use client";
+
 import {
   Dialog,
   DialogContent,
@@ -9,12 +11,55 @@ import {
 } from "@/components/ui/dialog";
 import { PlusIcon } from "@radix-ui/react-icons";
 import { Button } from "../ui/button";
-import { Label } from "../ui/label";
-import { Input } from "../ui/input";
+import InputWithLabel from "./InputWithLabel";
+import { useAddExpenses } from "@/lib/react-query/queries/useAddExpenses";
+import { useState } from "react";
+import { LoadingButton } from "../ui/loading-button";
+import { DatePicker } from "./DatePicker";
+import { Label } from "@radix-ui/react-label";
+import { useCategories } from "@/lib/react-query/queries/useCategories";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
 
 type Props = {};
 
 const AddExpenseDialog = (props: Props) => {
+  const { mutate: addExpense, isPending } = useAddExpenses();
+  const { data: categories, isLoading: isCategoriesLoading } = useCategories();
+
+  const [description, setDescription] = useState("");
+  const [amount, setAmount] = useState("");
+  const [category, setCategory] = useState("");
+
+  const handleDescriptionChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setDescription(e.target.value);
+  };
+
+  const handleAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setAmount(e.target.value);
+  };
+
+  const handleCategoryChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setCategory(e.target.value);
+  };
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    addExpense(
+      {
+        amount: parseInt(amount),
+        description: description,
+        category: category,
+        date: new Date().toISOString(),
+      },
+      {
+        onSuccess: () => {
+          setDescription("");
+          setAmount("");
+          setCategory("");
+        },
+      }
+    );
+  };
+
   return (
     <Dialog>
       <DialogTrigger asChild>
@@ -24,21 +69,56 @@ const AddExpenseDialog = (props: Props) => {
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
-        <DialogHeader>
-          <DialogTitle>Add Expense</DialogTitle>
-          <DialogDescription>
-            Add a new expense to your account.
-          </DialogDescription>
-        </DialogHeader>
-        <div className="grid gap-4 py-4">
-          <div className="grid gap-2">
-            <Label htmlFor="amount">Amount</Label>
-            <Input id="amount" placeholder="100" />
+        <form onSubmit={handleSubmit}>
+          <DialogHeader>
+            <DialogTitle>Add Expense</DialogTitle>
+            <DialogDescription>Add a new expense to your account.</DialogDescription>
+          </DialogHeader>
+          <div className="grid gap-6 py-4 mt-4">
+            <InputWithLabel
+              id="description"
+              value={description}
+              label="Description"
+              placeholder="Description"
+              onChange={handleDescriptionChange}
+            />
+            <InputWithLabel
+              id="amount"
+              value={amount}
+              label="Amount"
+              placeholder="Amount"
+              onChange={handleAmountChange}
+            />
+            <div className="grid gap-1">
+              <Label className="text-sm font-semibold" htmlFor="date">
+                Category
+              </Label>
+              <Select>
+                <SelectTrigger className="w-full h-10">
+                  <SelectValue placeholder="Select a category" />
+                </SelectTrigger>
+                <SelectContent>
+                  {categories?.data?.map((category: any) => (
+                    <SelectItem key={category.id} value={category.id}>
+                      {category.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="grid gap-1">
+              <Label className="text-sm font-semibold" htmlFor="date">
+                Date
+              </Label>
+              <DatePicker />
+            </div>
           </div>
-        </div>
-        <DialogFooter>
-          <Button type="submit">Save</Button>
-        </DialogFooter>
+          <DialogFooter>
+            <LoadingButton type="submit" className="h-10 w-1/2 mt-4" loading={isPending}>
+              Save
+            </LoadingButton>
+          </DialogFooter>
+        </form>
       </DialogContent>
     </Dialog>
   );
