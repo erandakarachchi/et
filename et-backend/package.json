@@ -13,6 +13,7 @@
   "devDependencies": {
     "@types/aws-lambda": "^8.10.145",
     "@types/jest": "^29.5.12",
+    "@types/jsonwebtoken": "^9.0.7",
     "@types/node": "22.5.4",
     "@types/uuid": "^10.0.0",
     "aws-cdk": "2.162.1",
@@ -22,8 +23,11 @@
     "typescript": "~5.6.2"
   },
   "dependencies": {
+    "@clerk/backend": "^1.14.1",
+    "@clerk/clerk-sdk-node": "^5.0.52",
     "aws-cdk-lib": "2.162.1",
     "constructs": "^10.0.0",
+    "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.7.1",
     "path": "^0.12.7",
     "source-map-support": "^0.5.21",

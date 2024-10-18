@@ -8,12 +8,25 @@ import Title from "@/components/templates/Title";
 import { Button } from "@/components/ui/button";
 import { useStatistics } from "@/lib/react-query/queries/useStatistics";
 import { Wallet, Carrot, Layers3, ChartSpline } from "lucide-react";
+import { useSession } from "@clerk/nextjs";
+
+import { useState, useEffect } from "react";
 
 type Props = {};
 
-const Page =  (props: Props) => {
-
+const Page = (props: Props) => {
   const { data, isLoading } = useStatistics();
+  const { session } = useSession();
+
+  useEffect(() => {
+    const fetchToken = async () => {
+      if (session) {
+        const fetchedToken = await session.getToken();
+        console.log("Token ", fetchedToken);
+      }
+    };
+    fetchToken();
+  }, [session]);
 
   return (
     <div className="md:ml-[256px] p-8">
