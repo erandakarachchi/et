@@ -19,16 +19,19 @@ import { DatePicker } from "./DatePicker";
 import { Label } from "@radix-ui/react-label";
 import { useCategories } from "@/lib/react-query/queries/useCategories";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
+import { useAPI } from "@/lib/providers/APIProvider";
 
 type Props = {};
 
 const AddExpenseDialog = (props: Props) => {
+  const apiClient = useAPI();
   const { mutate: addExpense, isPending } = useAddExpenses();
   const { data: categories, isLoading: isCategoriesLoading } = useCategories();
 
   const [description, setDescription] = useState("");
   const [amount, setAmount] = useState("");
   const [category, setCategory] = useState("");
+  const [date, setDate] = useState<Date>();
 
   const handleDescriptionChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setDescription(e.target.value);
@@ -38,17 +41,23 @@ const AddExpenseDialog = (props: Props) => {
     setAmount(e.target.value);
   };
 
-  const handleCategoryChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setCategory(e.target.value);
+  const handleCategoryChange = (value: string) => {
+    setCategory(value);
   };
+
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    if (!date) {
+      return;
+    }
+
     addExpense(
       {
         amount: parseInt(amount),
         description: description,
         category: category,
-        date: new Date().toISOString(),
+        date: date,
       },
       {
         onSuccess: () => {
@@ -93,7 +102,7 @@ const AddExpenseDialog = (props: Props) => {
               <Label className="text-sm font-semibold" htmlFor="date">
                 Category
               </Label>
-              <Select>
+              <Select onValueChange={handleCategoryChange}>
                 <SelectTrigger className="w-full h-10">
                   <SelectValue placeholder="Select a category" />
                 </SelectTrigger>
@@ -110,7 +119,7 @@ const AddExpenseDialog = (props: Props) => {
               <Label className="text-sm font-semibold" htmlFor="date">
                 Date
               </Label>
-              <DatePicker />
+              <DatePicker selectedDate={date} setSelectedDate={setDate} />
             </div>
           </div>
           <DialogFooter>

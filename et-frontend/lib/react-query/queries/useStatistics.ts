@@ -1,15 +1,13 @@
 import { useQuery } from "@tanstack/react-query";
 import { QUERY_KEYS } from "../constants";
-
-const fetchStatistics = async () => {
-  const response = await fetch("https://mvku1vlwcg.execute-api.us-east-1.amazonaws.com/prod/user/statistics");
-  const data = await response.json();
-  return data;
-};
+import { useAPI } from "@/lib/providers/APIProvider";
 
 export const useStatistics = () => {
+  const apiClient = useAPI();
+
   return useQuery({
-    queryKey: [QUERY_KEYS.USER],
-    queryFn: fetchStatistics,
+    queryKey: [QUERY_KEYS.STATISTICS],
+    queryFn: () => apiClient.getStatistics(),
+    retry: false,
   });
 };

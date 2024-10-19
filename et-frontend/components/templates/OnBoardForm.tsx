@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Input } from "../ui/input";
 import { Label } from "@radix-ui/react-label";
 import { useRouter } from "next/navigation";
+import { useUser } from "@clerk/nextjs";
 import { LoadingButton } from "../ui/loading-button";
 import { useOnboard } from "@/lib/react-query/queries/useOnboard";
 
@@ -13,11 +14,22 @@ const OnBoardForm = (props: Props) => {
   const router = useRouter();
   const { mutate: onboard, isPending } = useOnboard();
   const [expenseLimit, setExpenseLimit] = useState(0);
+  const { user } = useUser();
 
   const handleSubmit = async (formData: FormData) => {
+    if (!user) {
+      router.replace("/sign-in");
+      return;
+    }
+
+    if (!user.fullName || !user.emailAddresses[0].emailAddress) {
+      router.replace("/sign-in");
+      return;
+    }
+
     const onboardData = {
-      name: "Sample User",
-      email: "sample2@user.com",
+      name: user.fullName,
+      email: user.emailAddresses[0].emailAddress,
       maxMonthlyExpenseLimit: expenseLimit,
     };
     onboard(onboardData, {
@@ -35,7 +47,7 @@ const OnBoardForm = (props: Props) => {
         </Label>
         <Input
           required
-          className="w-full h-12"
+          className="w-full h-12 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
           type="number"
           id="expenseLimit"
           placeholder="Enter your monthly expense limit"
@@ -43,7 +55,7 @@ const OnBoardForm = (props: Props) => {
         />
       </div>
       <LoadingButton type="submit" className="w-full h-12" loading={isPending}>
-        Get Started
+        Continue
       </LoadingButton>
     </form>
   );

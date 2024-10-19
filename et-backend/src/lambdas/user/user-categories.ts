@@ -1,10 +1,12 @@
 import { APIGatewayProxyEvent, APIGatewayProxyResult, Handler } from "aws-lambda";
 import { sendResponse } from "../../utils/response-utils";
-import { getUserById } from "../../db/db-handler";
+import { getUserByClerkId } from "../../db/db-handler";
+import { getUserIdFromEventContext } from "../../utils/utils";
 
 export const handler: Handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
   try {
-    const user = await getUserById("6711d3373424dc7e41444d67");
+    const userId = getUserIdFromEventContext(event);
+    const user = await getUserByClerkId(userId);
     const categories = user?.categories || [];
     return sendResponse(200, "User Categories", categories);
   } catch (error) {

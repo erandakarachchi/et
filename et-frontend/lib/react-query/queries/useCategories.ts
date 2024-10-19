@@ -1,15 +1,12 @@
 import { useQuery } from "@tanstack/react-query";
 import { QUERY_KEYS } from "../constants";
-
-const fetchCategories = async () => {
-  const response = await fetch("https://mvku1vlwcg.execute-api.us-east-1.amazonaws.com/prod/user/categories");
-  const data = await response.json();
-  return data;
-};
+import { useAPI } from "@/lib/providers/APIProvider";
 
 export const useCategories = () => {
+  const apiClient = useAPI();
   return useQuery({
     queryKey: [QUERY_KEYS.USER],
-    queryFn: fetchCategories,
+    queryFn: () => apiClient.getCategories(),
+    retry: false,
   });
 };

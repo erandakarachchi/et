@@ -9,7 +9,6 @@ import { generateUUID } from "../utils/utils";
 export const createExpense = async (newExpense: IExpense) => {
   await connectToDatabase();
   const expense = new Expense(newExpense);
-  // await expense.validate();
   const savedExpense = await expense.save();
   return savedExpense;
 };
@@ -18,6 +17,7 @@ export const createUser = async (newUser: IUser) => {
   await connectToDatabase();
   const user: IUserWithId = {
     id: generateUUID(),
+    clerkId: newUser.clerkId,
     email: newUser.email,
     name: newUser.name,
     maxMonthlyExpenseLimit: newUser.maxMonthlyExpenseLimit,
@@ -29,14 +29,22 @@ export const createUser = async (newUser: IUser) => {
   return savedU;
 };
 
-export const viewAllExpenses = async () => {
+export const viewAllExpenses = async (userId: string) => {
   await connectToDatabase();
-  const expenses = await Expense.find();
+  const expenses = await Expense.find({ userId });
   return expenses;
 };
+
+
 
 export const getUserById = async (id: string) => {
   await connectToDatabase();
   const user = await User.findById(id);
+  return user;
+};
+
+export const getUserByClerkId = async (clerkId: string) => {
+  await connectToDatabase();
+  const user = await User.findOne({ clerkId });
   return user;
 };

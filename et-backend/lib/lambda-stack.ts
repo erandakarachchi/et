@@ -26,11 +26,6 @@ export class LambdaStack extends Stack {
       timeout: Duration.seconds(30),
     });
 
-    const api = new apigateway.LambdaRestApi(this, "HelloWorldApi", {
-      handler: helloWorldLambda,
-      proxy: false,
-    });
-
     const createExpenseLambda = new NodejsFunction(this, "CreateExpenseLambda", {
       entry: path.join(__dirname, "../src/lambdas/expense/create.ts"),
       runtime: Runtime.NODEJS_20_X,
@@ -59,23 +54,53 @@ export class LambdaStack extends Stack {
       timeout: Duration.seconds(30),
     });
 
-    const helloResource = api.root.addResource("hello");
-    helloResource.addMethod("GET");
+    const authorizerLambda = new NodejsFunction(this, "AuthorizerLambda", {
+      entry: path.join(__dirname, "../src/auth/authorizer.ts"),
+      runtime: Runtime.NODEJS_20_X,
+      handler: "handler",
+      timeout: Duration.seconds(30),
+    });
+
+    const authorizer = new apigateway.TokenAuthorizer(this, "ClerkAuthorizer", {
+      handler: authorizerLambda,
+      identitySource: apigateway.IdentitySource.header("Authorization"),
+      resultsCacheTtl: Duration.seconds(30),
+    });
+
+    const expenseTrackerAPI = new apigateway.RestApi(this, "ExpenseTrackerApi", {
+      restApiName: "Expense Tracker API",
+      description: "This is the Expense Tracker API",
+      defaultCorsPreflightOptions: {
+        allowOrigins: apigateway.Cors.ALL_ORIGINS,
+        allowMethods: apigateway.Cors.ALL_METHODS,
+        allowHeaders: [...apigateway.Cors.DEFAULT_HEADERS, "Authorization"],
+      },
+    });
+
+    const helloWorldIntegration = new apigateway.LambdaIntegration(helloWorldLambda);
+
+    const methodOptions: apigateway.MethodOptions = {
+      authorizer: authorizer,
+      authorizationType: apigateway.AuthorizationType.CUSTOM,
+    };
+
+    const helloResource = expenseTrackerAPI.root.addResource("hello");
+    helloResource.addMethod("GET", helloWorldIntegration, methodOptions);
 
     const viewAllExpensesIntegration = new apigateway.LambdaIntegration(viewAllExpensesLambda);
     const createExpenseIntegration = new apigateway.LambdaIntegration(createExpenseLambda);
-    const expensesResource = api.root.addResource("expenses");
-    expensesResource.addMethod("GET", viewAllExpensesIntegration);
-    expensesResource.addMethod("POST", createExpenseIntegration);
+    const expensesResource = expenseTrackerAPI.root.addResource("expenses");
+    expensesResource.addMethod("GET", viewAllExpensesIntegration, methodOptions);
+    expensesResource.addMethod("POST", createExpenseIntegration, methodOptions);
 
     const onboardUserIntegration = new apigateway.LambdaIntegration(onboardUserLambda);
-    const onboardUserResource = api.root.addResource("user");
-    onboardUserResource.addMethod("POST", onboardUserIntegration);
+    const onboardUserResource = expenseTrackerAPI.root.addResource("user");
+    onboardUserResource.addMethod("POST", onboardUserIntegration, methodOptions);
 
     const statisticsIntegration = new apigateway.LambdaIntegration(statisticsLambda);
-    onboardUserResource.addResource("statistics").addMethod("GET", statisticsIntegration);
+    onboardUserResource.addResource("statistics").addMethod("GET", statisticsIntegration, methodOptions);
 
     const userCategoriesIntegration = new apigateway.LambdaIntegration(userCategoriesLambda);
-    onboardUserResource.addResource("categories").addMethod("GET", userCategoriesIntegration);
+    onboardUserResource.addResource("categories").addMethod("GET", userCategoriesIntegration, methodOptions);
   }
 }
