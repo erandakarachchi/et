@@ -1,5 +1,6 @@
 import axios, { AxiosInstance } from "axios";
 import { BaseApi } from "./base";
+import { Expense } from "@/types/expense";
 
 export interface GenericResponse<T> {
   message: string;
@@ -47,7 +48,7 @@ export class APIClient extends BaseApi {
     return data;
   }
 
-  async getExpenses(): Promise<any> {
+  async getExpenses(): Promise<GenericResponse<Expense[]>> {
     return this.get("/expenses");
   }
 

@@ -1,7 +1,8 @@
 "use client";
 
 import AddExpenseDialog from "@/components/templates/AddExpenseDialog";
-import ExpensesTable, { TotalExpensesPerCategory } from "@/components/templates/ExpensesTable";
+import CategoryTable from "@/components/templates/CategoryTable";
+import { TotalExpensesPerCategory } from "@/components/templates/CategoryTable";
 import OverviewTile from "@/components/templates/OverviewTile";
 import PieChartCard from "@/components/templates/PieChartCard";
 import Title from "@/components/templates/Title";
@@ -45,7 +46,7 @@ const Page = (props: Props) => {
       {/* Charts and Recents */}
       <section className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-8">
         <PieChartCard />
-        <ExpensesTable
+        <CategoryTable
           isLoading={isLoading}
           totalExpensesPerCategory={data?.data.totalExpensesPerCategory as TotalExpensesPerCategory[]}
         />

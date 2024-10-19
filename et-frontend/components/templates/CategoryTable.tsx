@@ -2,7 +2,6 @@
 
 import React from "react";
 import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { useExpenses } from "@/lib/react-query/queries/useExpenses";
 
 export type TotalExpensesPerCategory = {
   name: string;
@@ -14,9 +13,7 @@ type Props = {
   isLoading: boolean;
 };
 
-const ExpensesTable = ({ totalExpensesPerCategory, isLoading }: Props) => {
-  console.log("totalExpensesPerCategory", totalExpensesPerCategory);
-
+const CategoryTable = ({ totalExpensesPerCategory, isLoading }: Props) => {
   if (isLoading) {
     return (
       <div className="border rounded-md p-4 border-border flex justify-center items-center">
@@ -58,4 +55,4 @@ const ExpensesTable = ({ totalExpensesPerCategory, isLoading }: Props) => {
   );
 };
 
-export default ExpensesTable;
+export default CategoryTable
