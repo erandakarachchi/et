@@ -12,7 +12,7 @@ export const useAddExpenses = () => {
     mutationFn: (expense: NewExpense) => apiClient.addExpense(expense),
     retry: false,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.EXPENSES] });
+      queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.EXPENSES, QUERY_KEYS.STATISTICS] });
     },
   });
 };

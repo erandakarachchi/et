@@ -4,35 +4,54 @@ import React from "react";
 import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { useExpenses } from "@/lib/react-query/queries/useExpenses";
 
-type Props = {};
+export type TotalExpensesPerCategory = {
+  name: string;
+  totalExpenses: number;
+};
 
-const ExpensesTable = (props: Props) => {
-  const { data: expenses, isLoading, isError } = useExpenses();
+type Props = {
+  totalExpensesPerCategory: TotalExpensesPerCategory[];
+  isLoading: boolean;
+};
 
-  if (isLoading) return <div>Loading...</div>;
-  if (isError) return <div>Error</div>;
+const ExpensesTable = ({ totalExpensesPerCategory, isLoading }: Props) => {
+  console.log("totalExpensesPerCategory", totalExpensesPerCategory);
+
+  if (isLoading) {
+    return (
+      <div className="border rounded-md p-4 border-border flex justify-center items-center">
+        <h3>Loading...</h3>
+      </div>
+    );
+  }
+
+  const hasData = totalExpensesPerCategory && totalExpensesPerCategory.length;
 
   return (
     <div className="border rounded-md p-4 border-border">
       <Table>
-        <TableCaption>A list of your recent invoices.</TableCaption>
+        <TableCaption>A list of your recent expenses.</TableCaption>
         <TableHeader>
           <TableRow>
-            <TableHead className="w-[100px]">Date</TableHead>
-            <TableHead>Description</TableHead>
-            <TableHead>Category</TableHead>
-            <TableHead className="text-right">Amount</TableHead>
+            <TableHead className="font-bold text-md">Category</TableHead>
+            <TableHead className="font-bold text-md text-center">Amount</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
-          {expenses.data?.map((expense: any) => (
-            <TableRow key={expense._id}>
-              <TableCell className="font-medium">{expense.description}</TableCell>
-              <TableCell>{expense.category}</TableCell>
-              <TableCell>{new Date(expense.date).toLocaleDateString()}</TableCell>
-              <TableCell className="text-right">${expense.amount.toFixed(2)}</TableCell>
+          {hasData ? (
+            totalExpensesPerCategory.map((expense: TotalExpensesPerCategory) => (
+              <TableRow key={expense.name}>
+                <TableCell className="font-medium">{expense.name}</TableCell>
+                <TableCell className="text-center">{expense.totalExpenses}</TableCell>
+              </TableRow>
+            ))
+          ) : (
+            <TableRow>
+              <TableCell colSpan={2} className="text-center">
+                No expenses found
+              </TableCell>
             </TableRow>
-          ))}
+          )}
         </TableBody>
       </Table>
     </div>

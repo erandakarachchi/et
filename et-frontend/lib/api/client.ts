@@ -1,6 +1,27 @@
 import axios, { AxiosInstance } from "axios";
 import { BaseApi } from "./base";
 
+export interface GenericResponse<T> {
+  message: string;
+  data: T;
+}
+
+export interface ExpenseCategory {
+  name: string;
+  totalExpenses: number;
+}
+
+export interface ExpenseStatistics {
+  totalExpenses: number;
+  consumedPercentage: number;
+  remainingPercentage: number;
+  dailyAverageExpense: number;
+  topSpendingCategory: ExpenseCategory;
+  totalExpensesPerCategory: ExpenseCategory[];
+  maxMonthlyExpenseLimit: number;
+  remainingExpenseLimit: number;
+}
+
 export class APIClient extends BaseApi {
   constructor(authToken: string | null) {
     console.log("Auth Token from API Client", authToken);
@@ -38,7 +59,7 @@ export class APIClient extends BaseApi {
     return this.post("/user", data);
   }
 
-  async getStatistics(): Promise<any> {
+  async getStatistics(): Promise<GenericResponse<ExpenseStatistics>> {
     return this.get("/user/statistics");
   }
 

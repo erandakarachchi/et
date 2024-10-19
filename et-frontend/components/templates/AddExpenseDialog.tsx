@@ -19,12 +19,10 @@ import { DatePicker } from "./DatePicker";
 import { Label } from "@radix-ui/react-label";
 import { useCategories } from "@/lib/react-query/queries/useCategories";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
-import { useAPI } from "@/lib/providers/APIProvider";
 
 type Props = {};
 
 const AddExpenseDialog = (props: Props) => {
-  const apiClient = useAPI();
   const { mutate: addExpense, isPending } = useAddExpenses();
   const { data: categories, isLoading: isCategoriesLoading } = useCategories();
 

@@ -1,5 +1,4 @@
 import AddExpenseDialog from "@/components/templates/AddExpenseDialog";
-import ExpensesTable from "@/components/templates/ExpensesTable";
 import Title from "@/components/templates/Title";
 import React from "react";
 
@@ -12,9 +11,7 @@ const Page = (props: Props) => {
         <Title title="Transactions" />
         <AddExpenseDialog />
       </div>
-      <div className="mt-8">
-        <ExpensesTable />
-      </div>
+      <div className="mt-8"></div>
     </div>
   );
 };
