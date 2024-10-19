@@ -90,17 +90,17 @@ export class LambdaStack extends Stack {
     const viewAllExpensesIntegration = new apigateway.LambdaIntegration(viewAllExpensesLambda);
     const createExpenseIntegration = new apigateway.LambdaIntegration(createExpenseLambda);
     const expensesResource = expenseTrackerAPI.root.addResource("expenses");
-    expensesResource.addMethod("GET", viewAllExpensesIntegration);
-    expensesResource.addMethod("POST", createExpenseIntegration);
+    expensesResource.addMethod("GET", viewAllExpensesIntegration, methodOptions);
+    expensesResource.addMethod("POST", createExpenseIntegration, methodOptions);
 
     const onboardUserIntegration = new apigateway.LambdaIntegration(onboardUserLambda);
     const onboardUserResource = expenseTrackerAPI.root.addResource("user");
-    onboardUserResource.addMethod("POST", onboardUserIntegration);
+    onboardUserResource.addMethod("POST", onboardUserIntegration, methodOptions);
 
     const statisticsIntegration = new apigateway.LambdaIntegration(statisticsLambda);
-    onboardUserResource.addResource("statistics").addMethod("GET", statisticsIntegration, {});
+    onboardUserResource.addResource("statistics").addMethod("GET", statisticsIntegration, methodOptions);
 
     const userCategoriesIntegration = new apigateway.LambdaIntegration(userCategoriesLambda);
-    onboardUserResource.addResource("categories").addMethod("GET", userCategoriesIntegration);
+    onboardUserResource.addResource("categories").addMethod("GET", userCategoriesIntegration, methodOptions);
   }
 }

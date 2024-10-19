@@ -1,5 +1,4 @@
 import { APIGatewayTokenAuthorizerEvent, APIGatewayAuthorizerResult } from "aws-lambda";
-import { ClerkClient, createClerkClient, verifyToken } from "@clerk/backend";
 import { verify } from "jsonwebtoken";
 
 const publicKey = `
@@ -10,9 +9,13 @@ export const handler = async (event: APIGatewayTokenAuthorizerEvent): Promise<AP
 
   try {
     const token = event.authorizationToken.split(" ")[1];
-    const claims = verify(token, publicKey);
+    const decodedToken = verify(token, publicKey);
 
-    const methodArn = event.methodArn;
+    const userId = decodedToken.sub;
+
+    if (!userId) {
+      throw new Error("Unauthorized");
+    }
 
     const authResponse: APIGatewayAuthorizerResult = {
       principalId: "user",
@@ -22,12 +25,12 @@ export const handler = async (event: APIGatewayTokenAuthorizerEvent): Promise<AP
           {
             Action: "execute-api:Invoke",
             Effect: "Allow",
-            Resource: methodArn,
+            Resource: "arn:aws:execute-api:*:*:*/*",
           },
         ],
       },
       context: {
-        claims: JSON.stringify(claims),
+        userId: userId.toString(),
       },
     };
     return authResponse;

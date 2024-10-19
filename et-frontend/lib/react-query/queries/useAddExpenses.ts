@@ -1,16 +1,16 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { QUERY_KEYS } from "../constants";
-import { ExpensesApi } from "@/lib/api/expenses";
 import { NewExpense } from "@/types/expense";
-
-// const expensesApi = ExpensesApi.getInstance();
-
-const expensesApi = new ExpensesApi();
+import { useAPI } from "@/lib/providers/APIProvider";
 
 export const useAddExpenses = () => {
   const queryClient = useQueryClient();
+
+  const apiClient = useAPI();
+
   return useMutation({
-    mutationFn: (expense: NewExpense) => expensesApi.addExpense(expense),
+    mutationFn: (expense: NewExpense) => apiClient.addExpense(expense),
+    retry: false,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.EXPENSES] });
     },

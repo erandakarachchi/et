@@ -16,17 +16,8 @@ type Props = {};
 
 const Page = (props: Props) => {
   const { data, isLoading } = useStatistics();
-  const { session } = useSession();
 
-  useEffect(() => {
-    const fetchToken = async () => {
-      if (session) {
-        const fetchedToken = await session.getToken();
-        console.log("Token ", fetchedToken);
-      }
-    };
-    fetchToken();
-  }, [session]);
+  console.log("data stats - ", data?.data.maxMonthlyExpenseLimit);
 
   return (
     <div className="md:ml-[256px] p-8">
@@ -37,8 +28,8 @@ const Page = (props: Props) => {
           <AddExpenseDialog />
         </div>
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mt-8">
-          <OverviewTile title="Monthly Spending" icon={<Wallet size={16} />}>
-            <p className="text-xl font-bold mt-4">LKR 8900.00</p>
+          <OverviewTile title="Max Spending Limit" icon={<Wallet size={16} />}>
+            <p className="text-xl font-bold mt-4">{data?.data.maxMonthlyExpenseLimit} LKR</p>
             <p className="text-xs text-muted-foreground mt-2">12% from last month</p>
           </OverviewTile>
           <OverviewTile title="Budget Status" icon={<Carrot size={16} />}>
@@ -50,7 +41,7 @@ const Page = (props: Props) => {
             <p className="text-xs text-muted-foreground mt-2">LKR 2500.00 spent this month</p>
           </OverviewTile>
           <OverviewTile title="Daily Average" icon={<ChartSpline size={16} />}>
-            <p className="text-xl font-bold mt-4">LKR 254.00</p>
+            <p className="text-xl font-bold mt-4"> 254.00 LKR</p>
             <p className="text-xs text-muted-foreground mt-2">based on this month</p>
           </OverviewTile>
         </div>

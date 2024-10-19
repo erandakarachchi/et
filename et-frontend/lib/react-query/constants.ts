@@ -28,4 +28,5 @@ export const QUERY_KEYS = {
   EXPENSES: "expenses",
   USER: "user",
   CATEGORIES: "categories",
+  STATISTICS: "statistics",
 } as const;

@@ -1,5 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { QUERY_KEYS } from "../constants";
+import { useAPI } from "@/lib/providers/APIProvider";
 
 interface Onboard {
   name: string;
@@ -7,22 +8,15 @@ interface Onboard {
   maxMonthlyExpenseLimit: number;
 }
 
-const onboard = async (onboard: Onboard) => {
-  const response = await fetch("https://mvku1vlwcg.execute-api.us-east-1.amazonaws.com/prod/user", {
-    method: "POST",
-    body: JSON.stringify(onboard),
-  });
-  if (!response.ok) {
-    throw new Error("Failed to onboard");
-  }
-};
-
 export const useOnboard = () => {
   const queryClient = useQueryClient();
+  const apiClient = useAPI();
+
   return useMutation({
-    mutationFn: onboard,
+    mutationFn: (data: Onboard) => apiClient.onboardUser(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.USER] });
     },
+    retry: false,
   });
 };

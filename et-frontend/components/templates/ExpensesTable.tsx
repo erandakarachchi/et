@@ -26,7 +26,7 @@ const ExpensesTable = (props: Props) => {
         </TableHeader>
         <TableBody>
           {expenses.data?.map((expense: any) => (
-            <TableRow key={expense.id}>
+            <TableRow key={expense._id}>
               <TableCell className="font-medium">{expense.description}</TableCell>
               <TableCell>{expense.category}</TableCell>
               <TableCell>{new Date(expense.date).toLocaleDateString()}</TableCell>

@@ -2,6 +2,11 @@ import mongoose, { Schema } from "mongoose";
 import { IUser } from "../../types/user";
 
 const User = new Schema<IUser>({
+  clerkId: {
+    type: String,
+    required: true,
+    unique: true,
+  },
   email: {
     type: String,
     required: true,
