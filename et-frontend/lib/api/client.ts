@@ -67,4 +67,8 @@ export class APIClient extends BaseApi {
   async addExpense(data: any): Promise<any> {
     return this.post("/expenses", data);
   }
+
+  async deleteExpense(expenseId: string): Promise<any> {
+    return this.delete(`/expenses/${expenseId}`);
+  }
 }

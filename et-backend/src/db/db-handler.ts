@@ -35,8 +35,6 @@ export const viewAllExpenses = async (userId: string) => {
   return expenses;
 };
 
-
-
 export const getUserById = async (id: string) => {
   await connectToDatabase();
   const user = await User.findById(id);
@@ -47,4 +45,10 @@ export const getUserByClerkId = async (clerkId: string) => {
   await connectToDatabase();
   const user = await User.findOne({ clerkId });
   return user;
+};
+
+export const deleteExpenseById = async (expenseId: string) => {
+  await connectToDatabase();
+  const deleted = await Expense.findByIdAndDelete(expenseId);
+  return deleted;
 };

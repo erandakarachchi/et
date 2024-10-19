@@ -1,28 +1,24 @@
 "use client";
 
 import { ColumnDef, flexRender, getCoreRowModel, useReactTable } from "@tanstack/react-table";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import { Expense } from "@/types/expense";
-import { Button } from "../ui/button";
 import { MoreHorizontal, Pencil, Trash2 } from "lucide-react";
 import { DataTable } from "./DataTable";
 import { useExpenses } from "@/lib/react-query/queries/useExpenses";
 import { Skeleton } from "@/components/ui/skeleton";
+import ConfirmationDialog from "./ConfirmationDialog";
+import { useDeleteExpense } from "@/lib/react-query/queries/useDeleteExpense";
 
 type Props = {};
 
 const AdvancedExpenseTable = (props: Props) => {
   const { data, isLoading } = useExpenses();
+  const { mutate: deleteExpense, isPending: isDeleting } = useDeleteExpense();
 
   const handleDeleteClick = (row: Expense) => {
-    console.log("Row ", row);
+    if (row.id) {
+      deleteExpense(row.id);
+    }
   };
 
   const handleEditClick = (row: Expense) => {
@@ -58,29 +54,20 @@ const AdvancedExpenseTable = (props: Props) => {
     {
       id: "actions",
       cell: ({ row }) => {
-        const payment = row.original;
-
+        const deleteIcon = <Trash2 className="cursor-pointer w-4 h-4" />;
+        const title = `Delete expense`;
+        const description = `Are you sure you want to delete this expense? This action cannot be undone.`;
         return (
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="h-8 w-8 p-0">
-                <span className="sr-only">Open menu</span>
-                <MoreHorizontal className="h-4 w-4" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuLabel>Actions</DropdownMenuLabel>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem className="cursor-pointer" onClick={() => handleEditClick(row.original)}>
-                <Pencil />
-                Edit
-              </DropdownMenuItem>
-              <DropdownMenuItem className="cursor-pointer" onClick={() => handleDeleteClick(row.original)}>
-                <Trash2 />
-                Delete
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+          <div className="flex gap-4">
+            <Pencil className="cursor-pointer w-4 h-4" onClick={() => handleEditClick(row.original)} />
+            <ConfirmationDialog
+              title={title}
+              description={description}
+              onConfirm={() => handleDeleteClick(row.original)}
+              trigger={deleteIcon}
+              confirmButtonText="Delete"
+            />
+          </div>
         );
       },
     },
