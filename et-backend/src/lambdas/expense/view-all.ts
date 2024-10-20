@@ -6,7 +6,12 @@ import { getUserIdFromEventContext } from "../../utils/utils";
 export const handler: Handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
   try {
     const userId = getUserIdFromEventContext(event);
-    const [user, expenses] = await Promise.all([getUserByClerkId(userId), viewAllExpenses(userId)]);
+    const { date, categoryId } = event.queryStringParameters || {};
+
+    const [user, expenses] = await Promise.all([
+      getUserByClerkId(userId),
+      viewAllExpenses(userId, { date, categoryId }),
+    ]);
 
     const categories = user?.categories;
     const cleanedExpenses = expenses.map((expense) => {

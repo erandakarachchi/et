@@ -13,23 +13,40 @@ import { PlusIcon } from "@radix-ui/react-icons";
 import { Button } from "../ui/button";
 import InputWithLabel from "./InputWithLabel";
 import { useAddExpenses } from "@/lib/react-query/queries/useAddExpenses";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { LoadingButton } from "../ui/loading-button";
 import { DatePicker } from "./DatePicker";
 import { Label } from "@radix-ui/react-label";
 import { useCategories } from "@/lib/react-query/queries/useCategories";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
+import { Expense } from "@/types/expense";
+import { useEditExpense } from "@/lib/react-query/queries/useEditExpense";
 
-type Props = {};
+type Props = {
+  expense?: Expense;
+  isEdit?: boolean;
+  triggerButton?: React.ReactNode;
+  triggerButtonText?: string;
+};
 
-const AddExpenseDialog = (props: Props) => {
+const AddExpenseDialog = ({ expense, isEdit, triggerButton, triggerButtonText }: Props) => {
   const { mutate: addExpense, isPending } = useAddExpenses();
+  const { mutate: editExpense, isPending: isEditPending } = useEditExpense();
   const { data: categories, isLoading: isCategoriesLoading } = useCategories();
 
-  const [description, setDescription] = useState("");
-  const [amount, setAmount] = useState("");
-  const [category, setCategory] = useState("");
-  const [date, setDate] = useState<Date>();
+  const [description, setDescription] = useState(expense?.description || "");
+  const [amount, setAmount] = useState(expense?.amount.toString() || "");
+  const [category, setCategory] = useState(expense?.category || "");
+  const [date, setDate] = useState<Date | undefined>(expense?.date ? new Date(expense.date) : undefined);
+
+  useEffect(() => {
+    if (!isCategoriesLoading && categories?.data && expense?.category) {
+      const selectedCategory = categories.data.find((cat: any) => cat.name === expense.category);
+      if (selectedCategory) {
+        setCategory(selectedCategory.id);
+      }
+    }
+  }, [isCategoriesLoading, categories, expense]);
 
   const handleDescriptionChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setDescription(e.target.value);
@@ -43,6 +60,12 @@ const AddExpenseDialog = (props: Props) => {
     setCategory(value);
   };
 
+  const resetValues = () => {
+    setDescription("");
+    setAmount("");
+    setCategory("");
+  };
+
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
@@ -50,36 +73,52 @@ const AddExpenseDialog = (props: Props) => {
       return;
     }
 
-    addExpense(
-      {
-        amount: parseInt(amount),
-        description: description,
-        category: category,
-        date: date,
-      },
-      {
-        onSuccess: () => {
-          setDescription("");
-          setAmount("");
-          setCategory("");
+    if (isEdit && expense?.id) {
+      editExpense({
+        expenseId: expense.id,
+        expense: {
+          amount: parseInt(amount),
+          description: description,
+          category: category,
+          date: date,
         },
-      }
-    );
+      });
+    } else {
+      addExpense(
+        {
+          amount: parseInt(amount),
+          description: description,
+          category: category,
+          date: date,
+        },
+        {
+          onSuccess: () => {
+            resetValues();
+          },
+        }
+      );
+    }
   };
 
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button>
-          <PlusIcon />
-          <p>Add Expense</p>
-        </Button>
+        {triggerButton ? (
+          triggerButton
+        ) : (
+          <Button>
+            <PlusIcon />
+            <p>{triggerButtonText || "Add Expense"}</p>
+          </Button>
+        )}
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <form onSubmit={handleSubmit}>
           <DialogHeader>
-            <DialogTitle>Add Expense</DialogTitle>
-            <DialogDescription>Add a new expense to your account.</DialogDescription>
+            <DialogTitle>{isEdit ? "Edit Expense" : "Add Expense"}</DialogTitle>
+            <DialogDescription>
+              {isEdit ? "Edit the expense details below." : "Add a new expense to your account."}
+            </DialogDescription>
           </DialogHeader>
           <div className="grid gap-6 py-4 mt-4">
             <InputWithLabel
@@ -97,10 +136,10 @@ const AddExpenseDialog = (props: Props) => {
               onChange={handleAmountChange}
             />
             <div className="grid gap-1">
-              <Label className="text-sm font-semibold" htmlFor="date">
+              <Label className="text-sm font-semibold" htmlFor="category">
                 Category
               </Label>
-              <Select onValueChange={handleCategoryChange}>
+              <Select value={category} onValueChange={handleCategoryChange}>
                 <SelectTrigger className="w-full h-10">
                   <SelectValue placeholder="Select a category" />
                 </SelectTrigger>

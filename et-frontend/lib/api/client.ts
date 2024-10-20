@@ -1,6 +1,7 @@
 import axios, { AxiosInstance } from "axios";
 import { BaseApi } from "./base";
 import { Expense } from "@/types/expense";
+import { ExpenseFilter } from "../react-query/queries/useExpenses";
 
 export interface GenericResponse<T> {
   message: string;
@@ -25,8 +26,6 @@ export interface ExpenseStatistics {
 
 export class APIClient extends BaseApi {
   constructor(authToken: string | null) {
-    console.log("Auth Token from API Client", authToken);
-
     if (!authToken) {
       throw new Error("Auth token is required");
     }
@@ -44,11 +43,18 @@ export class APIClient extends BaseApi {
 
   async getCategories(): Promise<any> {
     const data = await this.get("/user/categories");
-    console.log("Data", data);
     return data;
   }
 
-  async getExpenses(): Promise<GenericResponse<Expense[]>> {
+  async getExpenses(filter?: ExpenseFilter): Promise<GenericResponse<Expense[]>> {
+    const queryParams = new URLSearchParams();
+    if (filter?.categoryId && filter.categoryId !== "all") {
+      queryParams.append("categoryId", filter.categoryId);
+    }
+    if (queryParams) {
+      const queryString = queryParams.toString();
+      return this.get(`/expenses?${queryString}`);
+    }
     return this.get("/expenses");
   }
 
@@ -70,5 +76,9 @@ export class APIClient extends BaseApi {
 
   async deleteExpense(expenseId: string): Promise<any> {
     return this.delete(`/expenses/${expenseId}`);
+  }
+
+  async editExpense(expenseId: string, data: any): Promise<any> {
+    return this.put(`/expenses/${expenseId}`, data);
   }
 }

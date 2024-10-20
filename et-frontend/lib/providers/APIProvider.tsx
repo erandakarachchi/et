@@ -32,7 +32,8 @@ const APIProvider = ({ children }: Props) => {
       if (session) {
         setIsLoading(true);
         try {
-          const fetchedToken = await session.getToken();
+          const fetchedToken = await session.getToken({ template: "custom-backend" });
+          console.log("fetchedToken - ", fetchedToken);
           const newApiClient = new APIClient(fetchedToken);
           setApiClient(newApiClient);
         } catch (error) {
