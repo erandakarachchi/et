@@ -27,6 +27,7 @@
     "@clerk/clerk-sdk-node": "^5.0.52",
     "aws-cdk-lib": "2.162.1",
     "constructs": "^10.0.0",
+    "dotenv": "^16.4.5",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.7.1",
     "path": "^0.12.7",

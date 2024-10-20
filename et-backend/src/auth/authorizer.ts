@@ -1,14 +1,15 @@
 import { APIGatewayTokenAuthorizerEvent, APIGatewayAuthorizerResult } from "aws-lambda";
 import { verify } from "jsonwebtoken";
 
-const publicKey = `
-
-`;
+const publicKey = process.env.PUBLIC_KEY;
 
 export const handler = async (event: APIGatewayTokenAuthorizerEvent): Promise<APIGatewayAuthorizerResult> => {
   console.log("Authorizer event:", JSON.stringify(event, null, 2));
 
   try {
+    if (!publicKey) {
+      throw new Error("Public key is not defined");
+    }
     const token = event.authorizationToken.split(" ")[1];
     const decodedToken = verify(token, publicKey);
 

@@ -3,7 +3,6 @@
 import AddExpenseDialog from "@/components/templates/AddExpenseDialog";
 import CategoryTable from "@/components/templates/CategoryTable";
 import { TotalExpensesPerCategory } from "@/components/templates/CategoryTable";
-import OverviewTile from "@/components/templates/OverviewTile";
 import PieChartCard from "@/components/templates/PieChartCard";
 import Title from "@/components/templates/Title";
 import { useStatistics } from "@/lib/react-query/queries/useStatistics";
@@ -34,14 +33,16 @@ const Page = (props: Props) => {
             </Alert>
           </section>
         )}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mt-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4 mt-8">
           <StatsTile
+            isLoading={isLoading}
             title="Max Spending Limit"
             icon={<Wallet size={16} />}
             contentTitle={formatCurrency(data?.data.maxMonthlyExpenseLimit ?? 0)}
             contentDescription={`${data?.data.remainingPercentage}% from total remaining`}
           />
           <StatsTile
+            isLoading={isLoading}
             title="Total Spent"
             icon={<Carrot size={16} />}
             contentTitle={`${data?.data.consumedPercentage}%`}
@@ -49,12 +50,14 @@ const Page = (props: Props) => {
             variant={exceededLimit ? "destructive" : "default"}
           />
           <StatsTile
+            isLoading={isLoading}
             title="Top Category"
             icon={<Layers3 size={16} />}
             contentTitle={data?.data.topSpendingCategory.name ?? "N/A"}
             contentDescription={`${formatCurrency(data?.data.topSpendingCategory.totalExpenses ?? 0)} spent this month`}
           />
           <StatsTile
+            isLoading={isLoading}
             title="Daily Average"
             icon={<ChartSpline size={16} />}
             contentTitle={formatCurrency(data?.data.dailyAverageExpense ?? 0)}

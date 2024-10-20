@@ -31,7 +31,7 @@ export class APIClient extends BaseApi {
     }
 
     const axiosInstance = axios.create({
-      baseURL: "https://2djdql9jm1.execute-api.us-east-1.amazonaws.com/prod",
+      baseURL: process.env.NEXT_PUBLIC_API_URL,
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${authToken}`,

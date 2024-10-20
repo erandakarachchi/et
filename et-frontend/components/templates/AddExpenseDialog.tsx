@@ -21,6 +21,7 @@ import { useCategories } from "@/lib/react-query/queries/useCategories";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
 import { Expense } from "@/types/expense";
 import { useEditExpense } from "@/lib/react-query/queries/useEditExpense";
+import { useToast } from "@/hooks/use-toast";
 
 type Props = {
   expense?: Expense;
@@ -33,7 +34,7 @@ const AddExpenseDialog = ({ expense, isEdit, triggerButton, triggerButtonText }:
   const { mutate: addExpense, isPending } = useAddExpenses();
   const { mutate: editExpense, isPending: isEditPending } = useEditExpense();
   const { data: categories, isLoading: isCategoriesLoading } = useCategories();
-
+  const { toast } = useToast();
   const [description, setDescription] = useState(expense?.description || "");
   const [amount, setAmount] = useState(expense?.amount.toString() || "");
   const [category, setCategory] = useState(expense?.category || "");
@@ -69,20 +70,43 @@ const AddExpenseDialog = ({ expense, isEdit, triggerButton, triggerButtonText }:
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    if (!date) {
+    const ifDateIsFuture = date && date > new Date();
+
+    if (ifDateIsFuture) {
+      toast({
+        title: "Date is in the future",
+        description: "Please select a date in the past.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (!description || !amount || !category || !date) {
+      toast({
+        title: "All fields are required",
+        description: "Please fill in all fields to add an expense.",
+        variant: "destructive",
+      });
       return;
     }
 
     if (isEdit && expense?.id) {
-      editExpense({
-        expenseId: expense.id,
-        expense: {
-          amount: parseInt(amount),
-          description: description,
-          category: category,
-          date: date,
+      editExpense(
+        {
+          expenseId: expense.id,
+          expense: {
+            amount: parseInt(amount),
+            description: description,
+            category: category,
+            date: date,
+          },
         },
-      });
+        {
+          onSuccess: () => {
+            resetValues();
+          },
+        }
+      );
     } else {
       addExpense(
         {
@@ -160,7 +184,7 @@ const AddExpenseDialog = ({ expense, isEdit, triggerButton, triggerButtonText }:
             </div>
           </div>
           <DialogFooter>
-            <LoadingButton type="submit" className="h-10 w-1/2 mt-4" loading={isPending}>
+            <LoadingButton type="submit" className="h-10 w-1/2 mt-4" loading={isPending || isEditPending}>
               Save
             </LoadingButton>
           </DialogFooter>

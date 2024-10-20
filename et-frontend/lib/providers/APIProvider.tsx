@@ -3,6 +3,7 @@ import { useSession } from "@clerk/nextjs";
 import { useEffect, createContext, useContext, useState } from "react";
 import { APIClient } from "../api/client";
 import { usePathname } from "next/navigation";
+import { RefreshCcw } from "lucide-react";
 
 type Props = {
   children: React.ReactNode;
@@ -33,7 +34,6 @@ const APIProvider = ({ children }: Props) => {
         setIsLoading(true);
         try {
           const fetchedToken = await session.getToken({ template: "custom-backend" });
-          console.log("fetchedToken - ", fetchedToken);
           const newApiClient = new APIClient(fetchedToken);
           setApiClient(newApiClient);
         } catch (error) {
@@ -48,9 +48,12 @@ const APIProvider = ({ children }: Props) => {
 
   return (
     <APIContext.Provider value={apiClient}>
-      {isLoading && !whitelistedPages.includes(pathname) ? (
-        <div className="h-screen flex items-center justify-center">
-          <h1 className="text-2xl font-bold">We're getting things ready for you...</h1>
+      {(isLoading && !whitelistedPages.includes(pathname)) ? (
+        <div className="h-screen flex flex-col items-center justify-center">
+          <div className="text-center mb-8 flex flex-col items-center">
+            <h1 className="text-lg lg:text-2xl font-bold">We're getting things ready for you...</h1>
+            <RefreshCcw className="w-10 h-10 animate-spin mt-8" />
+          </div>
         </div>
       ) : (
         children

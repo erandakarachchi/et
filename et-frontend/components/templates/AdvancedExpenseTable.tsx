@@ -10,7 +10,6 @@ import ConfirmationDialog from "./ConfirmationDialog";
 import { useDeleteExpense } from "@/lib/react-query/queries/useDeleteExpense";
 import AddExpenseDialog from "./AddExpenseDialog";
 import { Select, SelectItem, SelectValue, SelectContent, SelectTrigger } from "../ui/select";
-import { DatePicker } from "./DatePicker";
 import { useMemo, useState } from "react";
 import { useCategories } from "@/lib/react-query/queries/useCategories";
 
@@ -18,7 +17,7 @@ type Props = {};
 
 const AdvancedExpenseTable = (props: Props) => {
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date());
-  const [selectedCategory, setSelectedCategory] = useState<string | undefined>("");
+  const [selectedCategory, setSelectedCategory] = useState<string>("all");
 
   const filter: ExpenseFilter = useMemo(
     () => ({
@@ -39,7 +38,6 @@ const AdvancedExpenseTable = (props: Props) => {
   };
 
   const filterByCategory = (category: string) => {
-    console.log(category);
     setSelectedCategory(category);
   };
 
@@ -125,9 +123,6 @@ const AdvancedExpenseTable = (props: Props) => {
             </Select>
           )}
         </div>
-        {/* <div className="">
-          <DatePicker selectedDate={selectedDate} setSelectedDate={setSelectedDate} />
-        </div> */}
       </div>
       <div className="mt-4">
         {hasData ? (
