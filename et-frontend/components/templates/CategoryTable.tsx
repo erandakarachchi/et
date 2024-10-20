@@ -30,16 +30,16 @@ const CategoryTable = ({ totalExpensesPerCategory, isLoading }: Props) => {
         <TableCaption>A list of your recent expenses.</TableCaption>
         <TableHeader>
           <TableRow>
-            <TableHead className="font-bold text-md">Category</TableHead>
-            <TableHead className="font-bold text-md text-center">Amount</TableHead>
+            <TableHead className="font-bold text-sm lg:text-md">Category</TableHead>
+            <TableHead className="font-bold text-sm lg:text-md text-center">Amount</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
           {hasData ? (
             totalExpensesPerCategory.map((expense: TotalExpensesPerCategory) => (
               <TableRow key={expense.name}>
-                <TableCell className="font-medium">{expense.name}</TableCell>
-                <TableCell className="text-center">{expense.totalExpenses}</TableCell>
+                <TableCell className="text-xs lg:text-md font-medium">{expense.name}</TableCell>
+                <TableCell className="text-xs lg:text-md text-center">{expense.totalExpenses}</TableCell>
               </TableRow>
             ))
           ) : (

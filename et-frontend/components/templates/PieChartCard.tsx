@@ -45,7 +45,7 @@ const PieChartCard = (props: Props) => {
 
   return (
     <div className="border rounded-md p-4 border-border">
-      <h2 className="text-lg font-semibold mb-4">Expenses by Category</h2>
+      <h2 className="text-md lg:text-lg font-semibold mb-4">Expenses by Category</h2>
       {isLoading ? (
         <Skeleton className="w-full h-[250px]" />
       ) : (
@@ -53,7 +53,7 @@ const PieChartCard = (props: Props) => {
           <PieChart>
             <ChartTooltip cursor={false} content={<ChartTooltipContent hideLabel />} />
             <Pie className="text-xs" data={chartData} dataKey="totalExpenses" nameKey="name" />
-            <ChartLegend className="text-xs flex flex-wrap lg:flex-nowrap" content={<ChartLegendContent />} />
+            <ChartLegend className="text-xs flex flex-wrap gap-3 justify-center" content={<ChartLegendContent />} />
           </PieChart>
         </ChartContainer>
       )}

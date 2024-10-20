@@ -12,3 +12,8 @@ export function formatCurrency(amount: number) {
 export function formatPercentage(amount: number) {
   return new Intl.NumberFormat("en-US", { style: "percent", maximumFractionDigits: 2 }).format(amount);
 }
+
+export function formatNumberWithCommas(num: string): string {
+  const numericValue = num.replace(/,/g, "");
+  return Number(numericValue).toLocaleString("en-US");
+}

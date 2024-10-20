@@ -12,13 +12,6 @@ export class LambdaStack extends Stack {
   constructor(scope: Construct, id: string, props: LambdaStackProps) {
     super(scope, id, props);
 
-    const helloWorldLambda = new NodejsFunction(this, "HelloWorldLambda", {
-      entry: path.join(__dirname, "../src/lambdas/hello-world.ts"),
-      runtime: Runtime.NODEJS_20_X,
-      handler: "handler",
-      timeout: Duration.seconds(30),
-    });
-
     const viewAllExpensesLambda = new NodejsFunction(this, "ViewAllExpensesLambda", {
       entry: path.join(__dirname, "../src/lambdas/expense/view-all.ts"),
       runtime: Runtime.NODEJS_20_X,
@@ -91,37 +84,30 @@ export class LambdaStack extends Stack {
       },
     });
 
-    const helloWorldIntegration = new apigateway.LambdaIntegration(helloWorldLambda);
-
     const methodOptions: apigateway.MethodOptions = {
       authorizer: authorizer,
       authorizationType: apigateway.AuthorizationType.CUSTOM,
     };
 
-    const helloResource = expenseTrackerAPI.root.addResource("hello");
-    helloResource.addMethod("GET", helloWorldIntegration, methodOptions);
-
     const viewAllExpensesIntegration = new apigateway.LambdaIntegration(viewAllExpensesLambda);
     const createExpenseIntegration = new apigateway.LambdaIntegration(createExpenseLambda);
     const deleteExpenseIntegration = new apigateway.LambdaIntegration(deleteExpenseLambda);
     const updateExpenseIntegration = new apigateway.LambdaIntegration(updateExpenseLambda);
+    const onboardUserIntegration = new apigateway.LambdaIntegration(onboardUserLambda);
+    const statisticsIntegration = new apigateway.LambdaIntegration(statisticsLambda);
+    const userCategoriesIntegration = new apigateway.LambdaIntegration(userCategoriesLambda);
 
     const expensesResource = expenseTrackerAPI.root.addResource("expenses");
     expensesResource.addMethod("GET", viewAllExpensesIntegration, methodOptions);
     expensesResource.addMethod("POST", createExpenseIntegration, methodOptions);
-    // expensesResource.addMethod("DELETE", deleteExpenseIntegration, methodOptions);
+
     const expenseIdResource = expensesResource.addResource("{expenseId}");
     expenseIdResource.addMethod("DELETE", deleteExpenseIntegration, methodOptions);
     expenseIdResource.addMethod("PUT", updateExpenseIntegration, methodOptions);
 
-    const onboardUserIntegration = new apigateway.LambdaIntegration(onboardUserLambda);
     const onboardUserResource = expenseTrackerAPI.root.addResource("user");
     onboardUserResource.addMethod("POST", onboardUserIntegration, methodOptions);
-
-    const statisticsIntegration = new apigateway.LambdaIntegration(statisticsLambda);
     onboardUserResource.addResource("statistics").addMethod("GET", statisticsIntegration, methodOptions);
-
-    const userCategoriesIntegration = new apigateway.LambdaIntegration(userCategoriesLambda);
     onboardUserResource.addResource("categories").addMethod("GET", userCategoriesIntegration, methodOptions);
   }
 }
