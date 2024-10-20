@@ -15,11 +15,16 @@ export class LambdaStack extends Stack {
   constructor(scope: Construct, id: string, props: LambdaStackProps) {
     super(scope, id, props);
 
+    const defaultEnvironmentVariables = {
+      MONGO_URI: process.env.MONGO_URI!,
+    };
+
     const viewAllExpensesLambda = new NodejsFunction(this, "ViewAllExpensesLambda", {
       entry: path.join(__dirname, "../src/lambdas/expense/view-all.ts"),
       runtime: Runtime.NODEJS_20_X,
       handler: "handler",
       timeout: Duration.seconds(30),
+      environment: defaultEnvironmentVariables,
     });
 
     const createExpenseLambda = new NodejsFunction(this, "CreateExpenseLambda", {
@@ -27,6 +32,7 @@ export class LambdaStack extends Stack {
       runtime: Runtime.NODEJS_20_X,
       handler: "handler",
       timeout: Duration.seconds(30),
+      environment: defaultEnvironmentVariables,
     });
 
     const onboardUserLambda = new NodejsFunction(this, "OnboardUserLambda", {
@@ -34,6 +40,7 @@ export class LambdaStack extends Stack {
       runtime: Runtime.NODEJS_20_X,
       handler: "handler",
       timeout: Duration.seconds(30),
+      environment: defaultEnvironmentVariables,
     });
 
     const statisticsLambda = new NodejsFunction(this, "StatisticsLambda", {
@@ -41,6 +48,7 @@ export class LambdaStack extends Stack {
       runtime: Runtime.NODEJS_20_X,
       handler: "handler",
       timeout: Duration.seconds(30),
+      environment: defaultEnvironmentVariables,
     });
 
     const userCategoriesLambda = new NodejsFunction(this, "UserCategoriesLambda", {
@@ -48,6 +56,7 @@ export class LambdaStack extends Stack {
       runtime: Runtime.NODEJS_20_X,
       handler: "handler",
       timeout: Duration.seconds(30),
+      environment: defaultEnvironmentVariables,
     });
 
     const deleteExpenseLambda = new NodejsFunction(this, "DeleteExpenseLambda", {
@@ -55,6 +64,7 @@ export class LambdaStack extends Stack {
       runtime: Runtime.NODEJS_20_X,
       handler: "handler",
       timeout: Duration.seconds(30),
+      environment: defaultEnvironmentVariables,
     });
 
     const updateExpenseLambda = new NodejsFunction(this, "UpdateExpenseLambda", {
@@ -62,6 +72,7 @@ export class LambdaStack extends Stack {
       runtime: Runtime.NODEJS_20_X,
       handler: "handler",
       timeout: Duration.seconds(30),
+      environment: defaultEnvironmentVariables,
     });
 
     const authorizerLambda = new NodejsFunction(this, "AuthorizerLambda", {
@@ -71,6 +82,7 @@ export class LambdaStack extends Stack {
       timeout: Duration.seconds(30),
       environment: {
         PUBLIC_KEY: process.env.PUBLIC_KEY || "",
+        ...defaultEnvironmentVariables,
       },
     });
 
