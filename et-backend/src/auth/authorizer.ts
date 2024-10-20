@@ -2,6 +2,7 @@ import { APIGatewayTokenAuthorizerEvent, APIGatewayAuthorizerResult } from "aws-
 import { verify } from "jsonwebtoken";
 
 const publicKey = `
+
 `;
 
 export const handler = async (event: APIGatewayTokenAuthorizerEvent): Promise<APIGatewayAuthorizerResult> => {

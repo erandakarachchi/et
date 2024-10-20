@@ -29,13 +29,17 @@ export const createUser = async (newUser: IUser) => {
   return savedU;
 };
 
-export const viewAllExpenses = async (userId: string) => {
+export const viewAllExpenses = async (userId: string, filter: any) => {
   await connectToDatabase();
-  const expenses = await Expense.find({ userId });
+  const query: any = { userId };
+
+  if (filter && filter.categoryId) {
+    query.category = filter.categoryId;
+  }
+
+  const expenses = await Expense.find(query);
   return expenses;
 };
-
-
 
 export const getUserById = async (id: string) => {
   await connectToDatabase();
@@ -47,4 +51,16 @@ export const getUserByClerkId = async (clerkId: string) => {
   await connectToDatabase();
   const user = await User.findOne({ clerkId });
   return user;
+};
+
+export const deleteExpenseById = async (expenseId: string) => {
+  await connectToDatabase();
+  const deleted = await Expense.findByIdAndDelete(expenseId);
+  return deleted;
+};
+
+export const updateExpense = async (expenseId: string, expense: IExpense) => {
+  await connectToDatabase();
+  const updated = await Expense.findByIdAndUpdate(expenseId, expense);
+  return updated;
 };

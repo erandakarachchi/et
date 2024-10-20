@@ -54,6 +54,20 @@ export class LambdaStack extends Stack {
       timeout: Duration.seconds(30),
     });
 
+    const deleteExpenseLambda = new NodejsFunction(this, "DeleteExpenseLambda", {
+      entry: path.join(__dirname, "../src/lambdas/expense/delete.ts"),
+      runtime: Runtime.NODEJS_20_X,
+      handler: "handler",
+      timeout: Duration.seconds(30),
+    });
+
+    const updateExpenseLambda = new NodejsFunction(this, "UpdateExpenseLambda", {
+      entry: path.join(__dirname, "../src/lambdas/expense/update.ts"),
+      runtime: Runtime.NODEJS_20_X,
+      handler: "handler",
+      timeout: Duration.seconds(30),
+    });
+
     const authorizerLambda = new NodejsFunction(this, "AuthorizerLambda", {
       entry: path.join(__dirname, "../src/auth/authorizer.ts"),
       runtime: Runtime.NODEJS_20_X,
@@ -89,9 +103,16 @@ export class LambdaStack extends Stack {
 
     const viewAllExpensesIntegration = new apigateway.LambdaIntegration(viewAllExpensesLambda);
     const createExpenseIntegration = new apigateway.LambdaIntegration(createExpenseLambda);
+    const deleteExpenseIntegration = new apigateway.LambdaIntegration(deleteExpenseLambda);
+    const updateExpenseIntegration = new apigateway.LambdaIntegration(updateExpenseLambda);
+
     const expensesResource = expenseTrackerAPI.root.addResource("expenses");
     expensesResource.addMethod("GET", viewAllExpensesIntegration, methodOptions);
     expensesResource.addMethod("POST", createExpenseIntegration, methodOptions);
+    // expensesResource.addMethod("DELETE", deleteExpenseIntegration, methodOptions);
+    const expenseIdResource = expensesResource.addResource("{expenseId}");
+    expenseIdResource.addMethod("DELETE", deleteExpenseIntegration, methodOptions);
+    expenseIdResource.addMethod("PUT", updateExpenseIntegration, methodOptions);
 
     const onboardUserIntegration = new apigateway.LambdaIntegration(onboardUserLambda);
     const onboardUserResource = expenseTrackerAPI.root.addResource("user");

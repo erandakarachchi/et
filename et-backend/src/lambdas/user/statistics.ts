@@ -1,6 +1,6 @@
 import { APIGatewayProxyEvent, APIGatewayProxyResult, Handler } from "aws-lambda";
 import { sendResponse } from "../../utils/response-utils";
-import { getUserByClerkId, getUserById, viewAllExpenses } from "../../db/db-handler";
+import { getUserByClerkId, viewAllExpenses } from "../../db/db-handler";
 import { getUserIdFromEventContext } from "../../utils/utils";
 
 export const handler: Handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
@@ -23,13 +23,15 @@ export const handler: Handler = async (event: APIGatewayProxyEvent): Promise<API
 
     const sortedExpensesPerCategory = totalExpensesPerCategory.sort((a, b) => b.totalExpenses - a.totalExpenses);
     const topSpendingCategory = sortedExpensesPerCategory[0];
-    const consumedPercentage = (totalExpenses / (user?.maxMonthlyExpenseLimit ?? 1)) * 100;
+    const consumedPercentage = Math.round((totalExpenses / (user?.maxMonthlyExpenseLimit ?? 1)) * 100);
     const dailyAverageExpense = totalExpenses / 30; // Assuming 30 days in a month and query by month
+    const remainingPercentage = 100 - consumedPercentage;
 
     const response = {
       totalExpenses,
       totalExpensesPerCategory,
       consumedPercentage,
+      remainingPercentage,
       dailyAverageExpense,
       topSpendingCategory,
       maxMonthlyExpenseLimit: user?.maxMonthlyExpenseLimit ?? 0,
