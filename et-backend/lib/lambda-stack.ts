@@ -5,8 +5,11 @@ import { NodejsFunction } from "aws-cdk-lib/aws-lambda-nodejs";
 import { Construct } from "constructs";
 import path = require("path");
 import * as apigateway from "aws-cdk-lib/aws-apigateway";
+import * as dotenv from "dotenv";
 
 interface LambdaStackProps extends StackProps {}
+
+dotenv.config();
 
 export class LambdaStack extends Stack {
   constructor(scope: Construct, id: string, props: LambdaStackProps) {
@@ -66,6 +69,9 @@ export class LambdaStack extends Stack {
       runtime: Runtime.NODEJS_20_X,
       handler: "handler",
       timeout: Duration.seconds(30),
+      environment: {
+        PUBLIC_KEY: process.env.PUBLIC_KEY || "",
+      },
     });
 
     const authorizer = new apigateway.TokenAuthorizer(this, "ClerkAuthorizer", {
